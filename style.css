@@ -16,7 +16,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;   /* min-height: o conteúdo não fica cortado em telas baixas */
+    padding: 16px 0;
     background-color: white;
     font-family: "Bai Jamjuree", sans-serif;
 }
@@ -48,13 +49,18 @@ p {
     position: relative; 
     margin: 0 auto 20px auto; /* Centraliza a caixa */
     overflow: hidden;
+    touch-action: manipulation; /* Sem zoom por duplo toque na área de montagem */
 }
 
 .tangram-imagem {
     position: absolute;
     cursor: grab;
     touch-action: none;
+    -webkit-user-select: none;
     user-select: none;
+    -webkit-user-drag: none;              /* Sem "arrastar imagem" nativo */
+    -webkit-touch-callout: none;          /* Sem menu de "salvar imagem" no toque longo (iOS) */
+    -webkit-tap-highlight-color: transparent; /* Sem caixa cinza ao tocar */
     /* Altere a transição para ser mais específica e rápida */
     transition: transform 0.1s linear, left 0s, top 0s; 
     /* Garante que ela comece com um estado de transformação definido */
@@ -67,6 +73,22 @@ p {
     gap: 15px;
     flex-wrap: wrap; /* Garante que caiba em telas estreitas */
     margin-top: 20px;
+    touch-action: manipulation; /* Sem zoom por duplo toque nos botões */
+}
+
+/* Destaque da peça selecionada: contorno que acompanha a forma (SVG transparente).
+   Camada branca + camada azul para aparecer sobre qualquer cor de peça.
+   filter não altera tamanho nem posição da peça. */
+.tangram-imagem.selecionada {
+    filter:
+        drop-shadow(2px 0 0 #fff)
+        drop-shadow(-2px 0 0 #fff)
+        drop-shadow(0 2px 0 #fff)
+        drop-shadow(0 -2px 0 #fff)
+        drop-shadow(1.5px 0 0 var(--cor-principal))
+        drop-shadow(-1.5px 0 0 var(--cor-principal))
+        drop-shadow(0 1.5px 0 var(--cor-principal))
+        drop-shadow(0 -1.5px 0 var(--cor-principal));
 }
 
 button {
@@ -79,8 +101,26 @@ button {
     font-size: 16px;
     cursor: pointer;
     font-family: "Bai Jamjuree", sans-serif;
+    min-height: 44px;    /* Área de toque confortável em tablets */
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
-button:hover {
+/* Hover só em aparelhos com mouse: evita o botão "preso" em cinza após o toque */
+@media (hover: hover) {
+    button:hover {
+        background-color: #e0e0e0;
+    }
+}
+
+button:active {
     background-color: #e0e0e0;
+}
+
+/* Telas estreitas: botões um pouco mais compactos para caberem lado a lado */
+@media (max-width: 600px) {
+    button {
+        padding: 10px 18px;
+    }
 }
