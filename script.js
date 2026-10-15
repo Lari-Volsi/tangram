@@ -10,6 +10,64 @@ let ponteiroAtivo = null; // pointerId do toque/mouse que está arrastando a pe�
 const versaoAtual = {};
 const angulosPecas = {};
 
+// Forma real de cada peça (vértices tirados dos SVGs, em px da imagem).
+// Todas as cores de uma peça têm a mesma forma.
+const formasPecas = {
+    A1: [[200.46, 100.23], [0, 100.23], [100.23, 0]],
+    A2: [[0, 99.84], [99.63, 0], [99.74, 99.74]],
+    A3: [[0.29, 99.82], [0, 0], [99.81, 0.32], [100.09, 100.13]],
+    A4: [[100.72, 0], [0.1, 100.82], [0, 0.1]],
+    A5: [[197.46, 196.17], [0, 1.29], [196.17, 0]],
+    A6: [[0, 277.43], [0, 0], [138.72, 138.72]],
+    A7: [[0, 141.77], [0, 0], [69.78, 69.22], [69.78, 213.21]]
+};
+
+// Distância (em px) do ponto até a forma da peça: 0 = dentro do desenho
+function distanciaAteForma(p, clientX, clientY) {
+    const caixaRect = caixa.getBoundingClientRect();
+    const estilo = getComputedStyle(p);
+    const padL = parseFloat(estilo.paddingLeft), padT = parseFloat(estilo.paddingTop);
+    const largura = p.clientWidth - padL - parseFloat(estilo.paddingRight);
+    const escala = p.naturalWidth ? largura / p.naturalWidth : 1;
+
+    // Ponto relativo ao centro da peça, "desfazendo" a rotação
+    const cx = caixaRect.left + caixa.clientLeft + parseFloat(p.style.left) + p.offsetWidth / 2;
+    const cy = caixaRect.top + caixa.clientTop + parseFloat(p.style.top) + p.offsetHeight / 2;
+    const ang = (angulosPecas[p.id] || 0) * Math.PI / 180;
+    const dx = clientX - cx, dy = clientY - cy;
+    const lx = dx * Math.cos(ang) + dy * Math.sin(ang) + p.offsetWidth / 2 - padL;
+    const ly = -dx * Math.sin(ang) + dy * Math.cos(ang) + p.offsetHeight / 2 - padT;
+    const x = lx / escala, y = ly / escala;
+
+    const pts = formasPecas[p.id];
+    if (!pts) return 0; // peça sem forma cadastrada: vale o retângulo
+    let dentro = false, menor = Infinity;
+    for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+        const [xi, yi] = pts[i], [xj, yj] = pts[j];
+        if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) dentro = !dentro;
+        // distância até o lado i-j
+        const vx = xj - xi, vy = yj - yi;
+        const t = Math.max(0, Math.min(1, ((x - xi) * vx + (y - yi) * vy) / (vx * vx + vy * vy)));
+        menor = Math.min(menor, Math.hypot(x - (xi + t * vx), y - (yi + t * vy)));
+    }
+    return dentro ? 0 : menor * escala;
+}
+
+// Peça cujo DESENHO está sob o ponto (a de cima primeiro). Com o dedo, aceita
+// uma pequena margem quando o toque não cai exatamente em nenhuma peça.
+function pecaNoPonto(clientX, clientY, tolerancia) {
+    const pecas = [...peca].reverse(); // a última no HTML fica por cima
+    for (const p of pecas) {
+        if (distanciaAteForma(p, clientX, clientY) === 0) return p;
+    }
+    let melhor = null, melhorDist = tolerancia;
+    for (const p of pecas) {
+        const d = distanciaAteForma(p, clientX, clientY);
+        if (d <= melhorDist) { melhor = p; melhorDist = d; }
+    }
+    return melhor;
+}
+
 function posicaoAleatoria(peca) {
     const caixaRect = caixa.getBoundingClientRect();
     const pecaWidth = peca.offsetWidth;
@@ -82,7 +140,11 @@ function iniciarPecas() {
             // Com mouse, só o botão principal arrasta
             if (e.pointerType === 'mouse' && e.button !== 0) return;
 
-            selecionarPeca(e.currentTarget);
+            // Só vale o toque no desenho da peça, não na área transparente da imagem
+            const alvo = pecaNoPonto(e.clientX, e.clientY, e.pointerType === 'mouse' ? 0 : 10);
+            if (!alvo) return;
+
+            selecionarPeca(alvo);
             ponteiroAtivo = e.pointerId;
 
             try {
