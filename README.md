@@ -22,7 +22,7 @@ Ele também trabalha ativamente a habilidade da BNCC de Computação:
 
 ## Para quem mantém o projeto
 * **Versão dos arquivos:** o `index.html` carrega `style.css?v=3` e `script.js?v=3`. Sempre que alterar o CSS ou o JavaScript, aumente esse número no `index.html` e também a variável `--versao-css` no `style.css`. Assim os navegadores dos alunos baixam a versão nova em vez de usar uma cópia antiga guardada.
-* **Destaque da peça selecionada:** usa um único `filter: drop-shadow()` na classe `.selecionada`, e cada peça tem `padding: 5px` (uma folga transparente). A folga mantém a sombra dentro da área da imagem; sem ela, alguns navegadores de tablet (como o Safari do iPad) deixam rastros ao arrastar a peça. Não remova a folga.
+* **Destaque da peça selecionada:** usa um único `filter: drop-shadow()` na classe `.selecionada`, e cada peça tem `padding: 5px` (uma folga transparente). A folga mantém a sombra dentro da área da imagem; sem ela, alguns navegadores de tablet deixam rastros ao arrastar a peça. Não remova a folga.
 * **Imagens:** cada peça tem cinco versões de cor em `img/` (por exemplo, `A1-01.svg` até `A1-05.svg`).
 
 ## Contribuição
