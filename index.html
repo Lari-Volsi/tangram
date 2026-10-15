@@ -3,17 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tangram Start</title>
+    <title>Tangram Start - teste de rastros (iPad)</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Página TEMPORÁRIA de diagnóstico. Não faz parte do projeto; pode ser apagada depois. -->
+    <style id="modo-teste"></style>
+    <style>
+        .painel-teste { margin-bottom: 10px; font-size: 14px; color: var(--cor-principal); }
+        .painel-teste button { padding: 6px 12px; font-size: 14px; min-height: 36px; }
+        .painel-teste button.ativo { outline: 3px solid var(--cor-principal); }
+    </style>
 </head>
 <body>
     <div class="container">
-        <div class="introducao">
-            <h1>Tangram Start</h1>
-            <p><b>Toque</b> ou <b>clique</b> em uma peça para selecioná-la. <br> Arraste para mover e use os <b>botões</b> para girar ou mudar a cor.</p>
-        </div>  
+        <div class="painel-teste">
+            <p><b>Modo do destaque:</b> <span id="modo-nome"></span></p>
+            <button data-modo="sem">1. Sem destaque</button>
+            <button data-modo="sombra">2. Sombra + folga (novo)</button>
+            <button data-modo="contorno">3. Contorno + folga</button>
+            <button data-modo="sem-folga">4. Sombra sem folga (ontem)</button>
+        </div>
         <div id="tangram-caixa">
-            <!-- Peças do Tangram -->
             <img src="img/A1-01.svg" id="A1" class="tangram-imagem" alt="Peça 1">
             <img src="img/A2-01.svg" id="A2" class="tangram-imagem" alt="Peça 2">
             <img src="img/A3-01.svg" id="A3" class="tangram-imagem" alt="Peça 3">
@@ -23,11 +32,30 @@
             <img src="img/A7-01.svg" id="A7" class="tangram-imagem" alt="Peça 7">
         </div>
         <div class="controles">
-    <button id="btn-gira-esquerda">↩️ Girar Esquerda</button>
-    <button id="btn-alternar-peca">🔄 Mudar cor</button>
-    <button id="btn-gira-direita">Girar Direita ↪️</button>
-</div>
+            <button id="btn-gira-esquerda">↩️ Girar Esquerda</button>
+            <button id="btn-alternar-peca">🔄 Mudar cor</button>
+            <button id="btn-gira-direita">Girar Direita ↪️</button>
+        </div>
     </div>
     <script src="script.js"></script>
+    <script>
+        // Cada modo só sobrescreve o filter da peça selecionada. script.js não é alterado.
+        const modos = {
+            'sem': ['Sem destaque', '.tangram-imagem.selecionada { filter: none; }'],
+            'sombra': ['Sombra + folga (o que está no style.css)', ''],
+            'contorno': ['Contorno branco e azul + folga',
+                '.tangram-imagem.selecionada { filter: drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff) drop-shadow(1.5px 0 0 #284260) drop-shadow(-1.5px 0 0 #284260) drop-shadow(0 1.5px 0 #284260) drop-shadow(0 -1.5px 0 #284260); }'],
+            'sem-folga': ['Sombra sem folga (versão de ontem, para comparar)', '.tangram-imagem { padding: 0; }']
+        };
+        function aplicarModo(m) {
+            document.getElementById('modo-teste').textContent = modos[m][1];
+            document.getElementById('modo-nome').textContent = modos[m][0];
+            document.querySelectorAll('.painel-teste button').forEach(b =>
+                b.classList.toggle('ativo', b.dataset.modo === m));
+        }
+        document.querySelectorAll('.painel-teste button').forEach(b =>
+            b.addEventListener('click', () => aplicarModo(b.dataset.modo)));
+        aplicarModo('sombra');
+    </script>
 </body>
 </html>
