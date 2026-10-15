@@ -61,6 +61,10 @@ p {
     -webkit-user-drag: none;              /* Sem "arrastar imagem" nativo */
     -webkit-touch-callout: none;          /* Sem menu de "salvar imagem" no toque longo (iOS) */
     -webkit-tap-highlight-color: transparent; /* Sem caixa cinza ao tocar */
+    /* Folga transparente ao redor do desenho: o destaque (drop-shadow) fica DENTRO
+       da caixa da peça. O Safari do iPad corta e não apaga o que o filtro desenha
+       fora dessa caixa (causa dos rastros). Não muda o tamanho da forma. */
+    padding: 5px;
     /* Altere a transição para ser mais específica e rápida */
     transition: transform 0.1s linear, left 0s, top 0s; 
     /* Garante que ela comece com um estado de transformação definido */
@@ -76,19 +80,11 @@ p {
     touch-action: manipulation; /* Sem zoom por duplo toque nos botões */
 }
 
-/* Destaque da peça selecionada: contorno que acompanha a forma (SVG transparente).
-   Camada branca + camada azul para aparecer sobre qualquer cor de peça.
-   filter não altera tamanho nem posição da peça. */
+/* Destaque da peça selecionada: sombra que acompanha a forma (SVG transparente).
+   Um único drop-shadow, sem desfoque e com valores inteiros (mais leve para o
+   Safari do iPad redesenhar durante o arraste). Não altera tamanho nem posição. */
 .tangram-imagem.selecionada {
-    filter:
-        drop-shadow(2px 0 0 #fff)
-        drop-shadow(-2px 0 0 #fff)
-        drop-shadow(0 2px 0 #fff)
-        drop-shadow(0 -2px 0 #fff)
-        drop-shadow(1.5px 0 0 var(--cor-principal))
-        drop-shadow(-1.5px 0 0 var(--cor-principal))
-        drop-shadow(0 1.5px 0 var(--cor-principal))
-        drop-shadow(0 -1.5px 0 var(--cor-principal));
+    filter: drop-shadow(4px 4px 0 rgba(40, 66, 96, 0.55)); /* #284260 a 55% */
 }
 
 button {
