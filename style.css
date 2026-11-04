@@ -20,7 +20,7 @@
     --cor-historia: var(--roxo);
 
     /* Aumente junto com o "?v=" do style.css no index.html (ver README) */
-    --versao-css: "4";
+    --versao-css: "5";
 }
 
 * {
@@ -77,10 +77,14 @@ body::after {
     word-wrap: break-word;
 }
 
+/* Título no mesmo tamanho dos títulos de abertura dos materiais EFAI */
 .introducao h1 {
     font-family: "Bai Jamjuree", "Trebuchet MS", sans-serif;
+    font-size: clamp(2rem, 1.2rem + 2.8vw, 3.5rem);
     font-weight: 700;
+    line-height: 1.02;
     letter-spacing: -0.01em;
+    text-transform: uppercase;
 }
 
 .introducao b {
