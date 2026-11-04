@@ -1,9 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@300;400;500;600&display=swap');
+/* Fontes da identidade visual EFAI: Bai Jamjuree (títulos e botões) e Inter (textos) */
+@import url('https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-    --cor-principal: #284260;
-    --cor-destaque: #fac900;
-    --cor-historia: #c75eeb;
+    /* Paleta oficial EFAI (ID_EFAI_2026) */
+    --vermelho: #e04c48;
+    --verde: #88d188;
+    --azul: #10a6e8;
+    --azul-texto: #0878b5;
+    --amarelo: #f4ca60;
+    --roxo: #bf6cef;
+    --preto: #1f1823;
+    --offwhite: #fffdf3;
+    --grad-lilas: rgba(217, 185, 232, .5);   /* gradientes só para fundos, a 50% */
+    --grad-amarelo: rgba(244, 219, 155, .5);
+
+    /* Nomes usados no projeto, agora com as cores EFAI */
+    --cor-principal: var(--preto);
+    --cor-destaque: var(--amarelo);
+    --cor-historia: var(--roxo);
+
+    /* Aumente junto com o "?v=" do style.css no index.html (ver README) */
+    --versao-css: "4";
 }
 
 * {
@@ -18,8 +35,32 @@ body {
     align-items: center;
     min-height: 100vh;   /* min-height: o conteúdo não fica cortado em telas baixas */
     padding: 16px 0;
-    background-color: white;
-    font-family: "Bai Jamjuree", sans-serif;
+    color: var(--preto);
+    background-color: var(--offwhite);
+    background-image: linear-gradient(120deg, var(--grad-lilas) 0%, var(--grad-amarelo) 100%);
+    background-attachment: fixed;
+    font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* Faixas coloridas da identidade EFAI, no alto e no pé da tela.
+   São só decoração: ficam fixas e não recebem toques nem cliques. */
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    left: 0;
+    right: 0;
+    height: 8px;
+    pointer-events: none;
+    z-index: 10;
+}
+body::before {
+    top: 0;
+    background: linear-gradient(90deg, var(--vermelho) 0 33.33%, var(--azul) 33.33% 66.66%, var(--verde) 66.66% 100%);
+}
+body::after {
+    bottom: 0;
+    background: linear-gradient(90deg, var(--amarelo) 0 50%, var(--roxo) 50% 100%);
 }
 
 .container {
@@ -36,6 +77,16 @@ body {
     word-wrap: break-word;
 }
 
+.introducao h1 {
+    font-family: "Bai Jamjuree", "Trebuchet MS", sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.introducao b {
+    color: var(--azul-texto);
+}
+
 p {
     padding-top: 10px;
 }
@@ -44,9 +95,11 @@ p {
     width: 95%;          /* Ocupa quase toda a largura em telas pequenas */
     max-width: 700px;    /* Mas não passa de 700px em telas grandes */
     height: 400px;       /* Reduzi um pouco a altura para caber melhor em tablets */
-    border: 2px solid var(--cor-destaque);
+    border: 2px solid var(--preto);
     border-radius: 20px;
-    position: relative; 
+    background-color: var(--offwhite);
+    box-shadow: 0 10px 24px -14px rgba(31, 24, 35, 0.45);
+    position: relative;
     margin: 0 auto 20px auto; /* Centraliza a caixa */
     overflow: hidden;
     touch-action: manipulation; /* Sem zoom por duplo toque na área de montagem */
@@ -66,9 +119,9 @@ p {
        fora dessa caixa (causa dos rastros). Não muda o tamanho da forma. */
     padding: 5px;
     /* Altere a transição para ser mais específica e rápida */
-    transition: transform 0.1s linear, left 0s, top 0s; 
+    transition: transform 0.1s linear, left 0s, top 0s;
     /* Garante que ela comece com um estado de transformação definido */
-    transform: rotate(0deg); 
+    transform: rotate(0deg);
 }
 
 .controles {
@@ -84,34 +137,50 @@ p {
    Um único drop-shadow, sem desfoque e com valores inteiros (mais leve para o
    Safari do iPad redesenhar durante o arraste). Não altera tamanho nem posição. */
 .tangram-imagem.selecionada {
-    filter: drop-shadow(4px 4px 0 rgba(40, 66, 96, 0.55)); /* #284260 a 55% */
+    filter: drop-shadow(4px 4px 0 rgba(31, 24, 35, 0.55)); /* preto EFAI #1f1823 a 55% */
 }
 
 button {
     background-color: var(--cor-destaque);
     color: var(--cor-principal);
-    border: none;
-    border-radius: 15px;
+    border: 2px solid var(--preto);
+    border-radius: 999px;
+    box-shadow: 0 4px 0 var(--preto);
     margin: 5px;
     padding: 10px 30px;
     font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
     cursor: pointer;
-    font-family: "Bai Jamjuree", sans-serif;
+    font-family: "Bai Jamjuree", "Trebuchet MS", sans-serif;
     min-height: 44px;    /* Área de toque confortável em tablets */
     touch-action: manipulation;
     -webkit-user-select: none;
     user-select: none;
 }
 
-/* Hover só em aparelhos com mouse: evita o botão "preso" em cinza após o toque */
+/* Botões de girar em azul; "Mudar cor" continua amarelo */
+#btn-gira-esquerda,
+#btn-gira-direita {
+    background-color: var(--azul);
+}
+
+/* Hover só em aparelhos com mouse: evita o botão "preso" após o toque */
 @media (hover: hover) {
     button:hover {
-        background-color: #e0e0e0;
+        filter: brightness(1.08);
     }
 }
 
+/* Botão pressionado: a sombra some, como nos outros materiais EFAI */
 button:active {
-    background-color: #e0e0e0;
+    box-shadow: 0 1px 0 var(--preto);
+    filter: brightness(0.95);
+}
+
+button:focus-visible {
+    outline: 3px solid var(--azul-texto);
+    outline-offset: 3px;
 }
 
 /* Telas estreitas: botões um pouco mais compactos para caberem lado a lado */
